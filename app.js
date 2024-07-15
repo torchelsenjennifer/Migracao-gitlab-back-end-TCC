@@ -8,7 +8,7 @@ import { Log } from './models/Log.js'
 
 
 const app = express()
-const port = 3000
+const port = 3001
 
 app.use(express.json())
 app.use(cors())
@@ -23,7 +23,7 @@ async function conecta_db(){
         await Log.sync()
         //await Livro.sync()
         //await Cadastro.sync()
-        
+
 await sequelize.sync({alter: true});  // Verifica se há alterações e atualiza as tabelas se houver
 await sequelize.sync();
     } catch (error){

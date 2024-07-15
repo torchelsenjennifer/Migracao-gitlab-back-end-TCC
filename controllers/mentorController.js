@@ -44,7 +44,6 @@ function validaSenha(senha) {
   return mensa
 }
 
-
 export const mentorIndex = async (req, res) => {
     try{
         const mentores = await Mentor.findAll();
@@ -56,7 +55,7 @@ export const mentorIndex = async (req, res) => {
 
 export const mentorCreate = async (req, res) => {
     const { nome, email, senha, cpf, telefone, interesse, descricao, linkedin, calendly } = req.body
-  
+
     // se não informou estes atributos
     if (!nome || !email || !senha || !cpf || !telefone || !interesse) {
       res.status(400).json({ id: 0, msg: "Erro... Informe os dados" })
@@ -67,11 +66,11 @@ export const mentorCreate = async (req, res) => {
   if (mensaValidacao.length >= 1) {
     res.status(400).json({ id: 0, msg: mensaValidacao })
     return
-  }  
+  }
 
     try {
       const mentor = await Mentor.create({
-        nome, email, senha, cpf, telefone, interesse, descricao, linkedin, calendly 
+        nome, email, senha, cpf, telefone, interesse, descricao, linkedin, calendly
       });
       res.status(201).json(mentor)
     } catch (error) {
@@ -80,16 +79,16 @@ export const mentorCreate = async (req, res) => {
   }
   export const mentorAlteraSenha = async (req, res) => {
     const { email, senha, novaSenha } = req.body
-  
+
     // se não informou estes atributos
     if (!email || !senha || !novaSenha) {
       res.status(400).json({ id: 0, msg: "Erro... Informe os dados" })
       return
     }
-  
+
     try {
       const mentor = await Mentor.findOne({ where: { email } })
-  
+
       if (mentor == null) {
         res.status(400).json({ erro: "Erro... E-mail inválido" })
         return
@@ -98,7 +97,7 @@ export const mentorCreate = async (req, res) => {
     if (mensaValidacao.length >= 1) {
       res.status(400).json({ id: 0, msg: mensaValidacao })
       return
-    }  
+    }
 
     if (bcrypt.compareSync(senha, mentor.senha)) {
 
@@ -125,3 +124,19 @@ export const mentorCreate = async (req, res) => {
     res.status(400).json(error)
   }
 }
+
+export const getMentorById = async (req, res) => {
+	const { id } = req.params;
+
+	try {
+	  const mentor = await Mentor.findByPk(id);
+
+	  if (!mentor) {
+		return res.status(404).json({ message: "Mentor not found" });
+	  }
+
+	  res.status(200).json(mentor);
+	} catch (error) {
+	  res.status(500).json({ message: "Error retrieving mentor", error: error.message });
+	}
+  };
