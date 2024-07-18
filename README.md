@@ -43,9 +43,9 @@ O servidor será iniciado em http://localhost:3000
 
 ### Scripts
 
-npm start: Inicia o servidor.
-npm run dev: Inicia o servidor com nodemon para recarregar automaticamente quando arquivos forem modificados.
-npm test: Mostra uma mensagem de erro pois nenhum teste está configurado.
+npm start: Inicia o servidor.<br>
+npm run dev: Inicia o servidor com nodemon para recarregar automaticamente quando arquivos forem modificados.<br>
+npm test: Mostra uma mensagem de erro pois nenhum teste está configurado.<br>
 
 ### Dependências
     
