@@ -11,7 +11,6 @@ Certifique-se de ter o Node.js instalado em sua máquina. Você pode baixá-lo [
 1. Clone o repositório:
     ```sh
     git clone git@github.com:jessicagasque/pd1_backend.git
-    
     cd pd1
     ```
 
@@ -38,14 +37,14 @@ Para iniciar o servidor em modo de desenvolvimento, use:
 ```sh
 npm run dev
 
-O servidor será iniciado em http://localhost:3000
 ````
+O servidor será iniciado em http://localhost:3000
 
 ### Scripts
 
-npm start: Inicia o servidor.<br>
-npm run dev: Inicia o servidor com nodemon para recarregar automaticamente quando arquivos forem modificados.<br>
-npm test: Mostra uma mensagem de erro pois nenhum teste está configurado.<br>
+<b>npm start:</b> Inicia o servidor.<br>
+<b>npm run dev:</b> Inicia o servidor com nodemon para recarregar automaticamente quando arquivos forem modificados.<br>
+<b>npm test:</b> Mostra uma mensagem de erro pois nenhum teste está configurado.<br>
 
 ### Dependências
     
