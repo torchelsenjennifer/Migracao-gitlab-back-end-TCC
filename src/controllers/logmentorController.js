@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { Mentor } from "../models/Mentor.js";
+import { Log } from "../models/Log.js";
 
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-import { Mentor } from "../models/Mentor.js";
-import { Log } from "../models/Log.js";
 
 export const loginMentor = async (req, res) => {
   const { email, senha } = req.body
