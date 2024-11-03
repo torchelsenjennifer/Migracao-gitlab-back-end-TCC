@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import ControllerMentor from './controllers/ControllerMonitor.js';
+import ControllerMentor from './controllers/ControllerMentor.js';
 
 const router = Router();
 const controllerMentor = new ControllerMentor();
