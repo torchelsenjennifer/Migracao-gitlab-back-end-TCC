@@ -14,7 +14,7 @@ export const Mentor = sequelize.define('Mentor', {
         allowNull: false
       },
       cpf: {
-        type: DataTypes.INTEGER(11),
+        type: DataTypes.STRING(11),
         allowNull: false
       },
       email: {
@@ -24,11 +24,11 @@ export const Mentor = sequelize.define('Mentor', {
       senha: {
         type: DataTypes.STRING(60),
         allowNull: false
-      }, 
+      },
       telefone: {
         type: DataTypes.STRING(18),
         allowNull: false
-      }, 
+      },
       interesse: {
         type: DataTypes.STRING(50),
         allowNull: false
@@ -44,23 +44,23 @@ export const Mentor = sequelize.define('Mentor', {
       calendly: {
         type: DataTypes.STRING(200),
         allowNull: false
-      },   
-      foto: { 
-        type: DataTypes.STRING(255), 
+      },
+      foto: {
+        type: DataTypes.STRING(255),
         allowNull: true
     }
-      
-         
+
+
     }, {
         tableName: 'mentores'
     });
 
 
-// Hook (gancho) do Sequelize que é executado antes 
+// Hook (gancho) do Sequelize que é executado antes
 // da inserção de um registro.
 // Faz a criptografia da senha e atribui o hash ao campo senha
 Mentor.beforeCreate(mentor => {
     const salt = bcrypt.genSaltSync(12)
     const hash = bcrypt.hashSync(mentor.senha, salt)
-    mentor.senha = hash  
+    mentor.senha = hash
   });

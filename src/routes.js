@@ -6,7 +6,7 @@ import { loginMentor } from "./controllers/logmentorController.js"
 const router = Router()
 
 router.get('/mentores', mentorIndex)
-      .post('/mentores', mentorCreate)
+      .post('/mentoress', mentorCreate)
       .put('/usuarios', mentorAlteraSenha)
 	  .get('/mentores/:id', getMentorById)
 
