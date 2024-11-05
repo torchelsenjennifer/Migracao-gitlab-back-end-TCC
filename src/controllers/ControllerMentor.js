@@ -1,5 +1,9 @@
+import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { Mentor } from '../models/Mentor.js';
+
+dotenv.config();
 
 export default class ControllerMentor {
     async IndexMentor(req, res) {
@@ -8,26 +12,28 @@ export default class ControllerMentor {
             res.status(200).json(mentores);
         } catch (error) {
             console.error('Erro ao buscar mentores: ', error.message);
-            res.status(400).send(error);
+            res.status(400).json({ erro: 'Erro ao buscar mentores' });
         }
     }
 
     async CreateMentor(req, res) {
         const data = req.body;
-        // COLOCAR OUTROS QUE ACHA QUE PRECISA SER OBRIGATORIOS #EHUSGURI!!!
         if (!data.email || !data.senha) {
-            res.status(400).json({ erro: 'Informe Email e senha' });
-            return;
+            return res.status(400).json({ erro: 'Informe Email e senha' });
+        }
+
+        const jwtSecret = process.env.JWT_SECRET;
+        if (!jwtSecret) {
+            return res.status(500).json({ erro: 'Erro interno do servidor' });
         }
 
         try {
-            const mentor = await Mentor.create({
-                ...data,
-            });
-            res.status(201).json(mentor);
+            const mentor = await Mentor.create({ ...data });
+            const token = jwt.sign({ id: mentor.id, email: mentor.email }, jwtSecret, { expiresIn: '1h' });
+            res.status(201).json({ mentor, token, message: 'Mentor criado com sucesso' });
         } catch (error) {
             console.error('Erro ao criar mentor: ', error.message);
-            res.status(400).send(error);
+            res.status(400).json({ erro: 'Erro ao criar mentor' });
         }
     }
 
@@ -35,26 +41,24 @@ export default class ControllerMentor {
         const { email, senha } = req.body;
 
         if (!email || !senha) {
-            res.status(400).json({ erro: 'Informe Email e senha' });
-            return;
+            return res.status(400).json({ erro: 'Informe Email e senha' });
         }
 
         try {
             const mentor = await Mentor.findOne({ where: { email } });
 
             if (!mentor) {
-                res.status(404).json({ erro: 'Mentor n√£o encontrado' });
-                return;
+                return res.status(404).json({ erro: 'Mentor n„o encontrado' });
             }
 
             const hash = await bcrypt.hash(senha, 10);
             mentor.senha = hash;
             await mentor.save();
 
-            res.status(200).json(mentor);
+            res.status(200).json({ message: 'Senha atualizada com sucesso', mentor });
         } catch (error) {
             console.error('Erro ao alterar senha: ', error.message);
-            res.status(400).send(error);
+            res.status(400).json({ erro: 'Erro ao alterar senha' });
         }
     }
 
@@ -65,14 +69,13 @@ export default class ControllerMentor {
             const mentor = await Mentor.findByPk(id);
 
             if (!mentor) {
-                res.status(404).json({ erro: 'Mentor n√£o encontrado' });
-                return;
+                return res.status(404).json({ erro: 'Mentor n„o encontrado' });
             }
 
             res.status(200).json(mentor);
         } catch (error) {
             console.error('Erro ao buscar mentor: ', error.message);
-            res.status(400).send(error);
+            res.status(400).json({ erro: 'Erro ao buscar mentor' });
         }
     }
 
@@ -83,16 +86,14 @@ export default class ControllerMentor {
             const mentor = await Mentor.findByPk(id);
 
             if (!mentor) {
-                res.status(404).json({ erro: 'Mentor n√£o encontrado' });
-                return;
+                return res.status(404).json({ erro: 'Mentor n„o encontrado' });
             }
 
             await mentor.destroy();
-
             res.status(200).json({ mensagem: 'Mentor deletado com sucesso' });
         } catch (error) {
             console.error('Erro ao deletar mentor: ', error.message);
-            res.status(400).send(error);
+            res.status(400).json({ erro: 'Erro ao deletar mentor' });
         }
     }
 
@@ -100,29 +101,28 @@ export default class ControllerMentor {
         const { email, senha } = req.body;
 
         if (!email || !senha) {
-            res.status(400).json({ erro: 'Informe Email e senha' });
-            return;
+            return res.status(400).json({ erro: 'Informe Email e senha' });
         }
 
         try {
             const mentor = await Mentor.findOne({ where: { email } });
 
             if (!mentor) {
-                res.status(404).json({ erro: 'Mentor n√£o encontrado' });
-                return;
+                return res.status(404).json({ erro: 'Mentor n„o encontrado' });
             }
 
-            const hash = await bcrypt.compare(senha, mentor.senha);
+            const isPasswordValid = await bcrypt.compare(senha, mentor.senha);
 
-            if (!hash) {
-                res.status(401).json({ erro: 'Senha inv√°lida' });
-                return;
+            if (!isPasswordValid) {
+                return res.status(401).json({ erro: 'Senha inv·lida' });
             }
 
-            res.status(200).json(mentor);
+            const token = jwt.sign({ id: mentor.id, email: mentor.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+            res.status(200).json({ mentor, token });
         } catch (error) {
             console.error('Erro ao fazer login: ', error.message);
-            res.status(400).send(error);
+            res.status(400).json({ erro: 'Erro ao fazer login' });
         }
     }
 }

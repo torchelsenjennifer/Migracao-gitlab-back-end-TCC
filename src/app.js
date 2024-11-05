@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import routes from './routes.js';
@@ -16,17 +17,17 @@ app.use(routes);
 async function conecta_db() {
     try {
         await sequelize.authenticate();
-        console.log('Conex√£o com banco de dados estabelecida com sucesso!');
+        console.log('Conex„o com banco de dados estabelecida com sucesso!');
 
         await Mentor.sync();
         // await Log.sync();
         //await Livro.sync()
         //await Cadastro.sync()
 
-        await sequelize.sync({ alter: true }); // Verifica se h√° altera√ß√µes e atualiza as tabelas se houver
+        await sequelize.sync({ alter: true }); // Verifica se h· alteraÁıes e atualiza as tabelas se houver
         await sequelize.sync();
     } catch (error) {
-        console.error('Erro na conex√£o com o banco: ', error);
+        console.error('Erro na conex„o com o banco: ', error);
     }
 }
 conecta_db();
