@@ -6,24 +6,19 @@ import { Log } from "../models/Log.js";
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-
 export const loginMentor = async (req, res) => {
   const { email, senha } = req.body
-  // evita de que a mensagem dê "pistas" para um possível invasor
   const mensaErroPadrao = "Erro... Login ou senha inválido"
 
   if (!email || !senha) {
-//    res.status(400).json({ erro: "Informe e-mail e senha de acesso" })
     res.status(400).json({ erro: mensaErroPadrao})
     return
   }
 
-  // verifica se o e-mail está cadastrado
   try {
     const mentor = await Mentor.findOne({ where: { email } })
 
     if (mentor == null) {
-      // res.status(400).json({ erro: "Erro... E-mail inválido" })
       res.status(400).json({ erro: mensaErroPadrao})
       return
     }
@@ -46,11 +41,10 @@ export const loginMentor = async (req, res) => {
         mentor_id: mentor.id
       })
 
-      // res.status(400).json({ erro: "Erro... Senha inválida" })      
+      // res.status(400).json({ erro: "Erro... Senha inválida" })
       res.status(400).json({ erro: mensaErroPadrao})
     }
   } catch (error) {
     res.status(400).json(error)
   }
 }
-
