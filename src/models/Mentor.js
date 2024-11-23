@@ -53,6 +53,14 @@ export const Mentor = sequelize.define('Mentor', {
       key: 'id', // Define qual campo é usado na referência
     },
   },
+  empresa: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+  },
+  formacao: {
+    type: DataTypes.STRING(200),
+    allowNull: false,
+  },
 }, {
   tableName: 'mentores',
 });

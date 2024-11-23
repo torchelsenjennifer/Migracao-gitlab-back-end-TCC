@@ -21,7 +21,7 @@ function validaSenha(senha) {
   const mensa = [];
 
   if (senha.length < 8) {
-    mensa.push("Erro... senha deve possuir, no mínimo, 8 caracteres");
+    mensa.push("Erro... senha deve possuir, no mï¿½nimo, 8 caracteres");
   }
 
   let pequenas = 0;
@@ -43,7 +43,7 @@ function validaSenha(senha) {
 
   if (pequenas == 0 || grandes == 0 || numeros == 0 || simbolos == 0) {
     mensa.push(
-      "Erro... senha deve possuir letras minúsculas, maiúsculas, números e símbolos"
+      "Erro... senha deve possuir letras minï¿½sculas, maiï¿½sculas, nï¿½meros e sï¿½mbolos"
     );
   }
 
@@ -52,12 +52,12 @@ function validaSenha(senha) {
 
 export const mentorIndex = async (req, res) => {
 	try {
-	  const { area_id } = req.query; // Obtém o parâmetro `area_id` da URL
+	  const { area_id } = req.query;
 
-	  const whereClause = area_id ? { area_id } : {}; // Condição: se houver `area_id`, filtra por ele
+	  const whereClause = area_id ? { area_id } : {};
 
 	  const mentores = await Mentor.findAll({
-		where: whereClause, // Aplica a cláusula WHERE com base no `area_id`
+		where: whereClause,
 	  });
 
 	  res.status(200).json(mentores);
@@ -85,7 +85,9 @@ export const mentorCreate = async (req, res) => {
       descricao,
       linkedin,
       calendly,
-	  area_id
+	  area_id,
+	  empresa,
+	  formacao
     } = req.body;
 
     const mensaValidacao = validaSenha(senha);
@@ -106,7 +108,9 @@ export const mentorCreate = async (req, res) => {
         calendly,
         foto,
         senha,
-		area_id
+		area_id,
+		empresa,
+		formacao
       });
       res.status(201).json(mentor);
     } catch (error) {
@@ -127,7 +131,7 @@ export const mentorAlteraSenha = async (req, res) => {
     const mentor = await Mentor.findOne({ where: { email } });
 
     if (!mentor) {
-      return res.status(400).json({ erro: "Erro... E-mail inválido" });
+      return res.status(400).json({ erro: "Erro... E-mail invï¿½lido" });
     }
 
     const mensaValidacao = validaSenha(novaSenha);
@@ -146,10 +150,10 @@ export const mentorAlteraSenha = async (req, res) => {
     } else {
       // Registra um log da tentativa de troca de senha
       await Log.create({
-        descricao: "Tentativa de Alteração de Senha",
+        descricao: "Tentativa de Alteraï¿½ï¿½o de Senha",
         mentor_id: mentor.id,
       });
-      res.status(400).json({ erro: "Erro... Senha inválida" });
+      res.status(400).json({ erro: "Erro... Senha invï¿½lida" });
     }
   } catch (error) {
     console.error("Erro ao alterar a senha: ", error.message);
