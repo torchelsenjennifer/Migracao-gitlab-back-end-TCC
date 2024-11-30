@@ -1,9 +1,13 @@
 import bcrypt from "bcrypt";
 import { Mentor } from "../models/Mentor.js";
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 import { Log } from "../models/Log.js";
 
-import multer from 'multer';
-import path from 'path';
+import multer from "multer";
+import path from "path";
+
+dotenv.config();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -16,6 +20,25 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+
+
+export const getUsuarioLogado = async (req, res) => {
+	// O usuário está disponível no objeto req.user após o middleware verificarToken
+	try {
+	  const usuarioLogado = req.user;
+
+	  if (!usuarioLogado) {
+		return res.status(404).json({ erro: "Usuário não encontrado" });
+	  }
+
+	  res.status(200).json({ usuario: usuarioLogado });
+	} catch (error) {
+	  console.error("Erro ao retornar o usuário logado:", error.message);
+	  res.status(500).json({ erro: "Erro ao recuperar o usuário logado", error: error.message });
+	}
+  };
+
 
 function validaSenha(senha) {
   const mensa = [];
@@ -51,21 +74,21 @@ function validaSenha(senha) {
 }
 
 export const mentorIndex = async (req, res) => {
-	try {
-	  const { area_id } = req.query;
+  try {
+    const { area_id } = req.query;
 
-	  const whereClause = area_id ? { area_id } : {};
+    const whereClause = area_id ? { area_id } : {};
 
-	  const mentores = await Mentor.findAll({
-		where: whereClause,
-	  });
+    const mentores = await Mentor.findAll({
+      where: whereClause,
+    });
 
-	  res.status(200).json(mentores);
-	} catch (error) {
-	  console.error("Erro ao buscar mentores: ", error.message);
-	  res.status(400).send(error);
-	}
-  };
+    res.status(200).json(mentores);
+  } catch (error) {
+    console.error("Erro ao buscar mentores: ", error.message);
+    res.status(400).send(error);
+  }
+};
 
 export const mentorCreate = async (req, res) => {
   const uploadMiddleware = upload.single("foto");
@@ -85,9 +108,9 @@ export const mentorCreate = async (req, res) => {
       descricao,
       linkedin,
       calendly,
-	  area_id,
-	  empresa,
-	  formacao
+      area_id,
+      empresa,
+      formacao,
     } = req.body;
 
     const mensaValidacao = validaSenha(senha);
@@ -108,9 +131,9 @@ export const mentorCreate = async (req, res) => {
         calendly,
         foto,
         senha,
-		area_id,
-		empresa,
-		formacao
+        area_id,
+        empresa,
+        formacao,
       });
       res.status(201).json(mentor);
     } catch (error) {
@@ -178,5 +201,43 @@ export const getMentorById = async (req, res) => {
       message: "Error retrieving mentor",
       error: error.message,
     });
+  }
+};
+
+export const LoginMentor = async (req, res) => {
+  const { email, senha } = req.body;
+
+  console.log(process.env.JWT_SECRET);  // Deve exibir a chave secreta
+
+
+  if (!email || !senha) {
+    return res.status(400).json({ erro: "Informe Email e senha" });
+  }
+
+  try {
+    const mentor = await Mentor.findOne({ where: { email } });
+
+    if (!mentor) {
+      return res.status(404).json({ erro: "Mentor não encontrado" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(senha, mentor.senha);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ erro: "Senha inválida" });
+    }
+
+    const token = jwt.sign(
+      { id: mentor.id, email: mentor.email, nome: mentor.nome },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    res.status(200).json({ mentor, token });
+  } catch (error) {
+    console.error("Erro ao fazer login: ", error.message);
+    res.status(400).json({ erro: "Erro ao fazer login" +error.message});
   }
 };
