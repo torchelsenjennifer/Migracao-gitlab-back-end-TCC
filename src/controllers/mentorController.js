@@ -1,9 +1,8 @@
 import bcrypt from "bcrypt";
 import { Mentor } from "../models/Mentor.js";
-import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 import { Log } from "../models/Log.js";
-
 import multer from "multer";
 import path from "path";
 
@@ -21,24 +20,24 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
-
 export const getUsuarioLogado = async (req, res) => {
-	// O usuário está disponível no objeto req.user após o middleware verificarToken
-	try {
-	  const usuarioLogado = req.user;
+  // O usuário está disponível no objeto req.user após o middleware verificarToken
+  try {
+    const usuarioLogado = req.user;
 
-	  if (!usuarioLogado) {
-		return res.status(404).json({ erro: "Usuário não encontrado" });
-	  }
+    if (!usuarioLogado) {
+      return res.status(404).json({ erro: "Usuário não encontrado" });
+    }
 
-	  res.status(200).json({ usuario: usuarioLogado });
-	} catch (error) {
-	  console.error("Erro ao retornar o usuário logado:", error.message);
-	  res.status(500).json({ erro: "Erro ao recuperar o usuário logado", error: error.message });
-	}
-  };
-
+    res.status(200).json({ usuario: usuarioLogado });
+  } catch (error) {
+    console.error("Erro ao retornar o usuário logado:", error.message);
+    res.status(500).json({
+      erro: "Erro ao recuperar o usuário logado",
+      error: error.message,
+    });
+  }
+};
 
 function validaSenha(senha) {
   const mensa = [];
@@ -207,8 +206,7 @@ export const getMentorById = async (req, res) => {
 export const LoginMentor = async (req, res) => {
   const { email, senha } = req.body;
 
-  console.log(process.env.JWT_SECRET);  // Deve exibir a chave secreta
-
+  console.log(process.env.JWT_SECRET); // Deve exibir a chave secreta
 
   if (!email || !senha) {
     return res.status(400).json({ erro: "Informe Email e senha" });
@@ -238,6 +236,66 @@ export const LoginMentor = async (req, res) => {
     res.status(200).json({ mentor, token });
   } catch (error) {
     console.error("Erro ao fazer login: ", error.message);
-    res.status(400).json({ erro: "Erro ao fazer login" +error.message});
+    res.status(400).json({ erro: "Erro ao fazer login" + error.message });
+  }
+};
+
+export const mentorAlteraPerfil = async (req, res) => {
+  const { id } = req.params;
+  const {
+    nome,
+    email,
+    senha,
+    telefone,
+    descricao,
+    linkedin,
+    calendly,
+    profissao,
+    area_id,
+    empresa,
+    formacao,
+  } = req.body;
+
+  if (
+    !nome &&
+    !email &&
+    !senha &&
+    !telefone &&
+    !descricao &&
+    !linkedin &&
+    !calendly &&
+    !profissao &&
+    !area_id &&
+    !empresa &&
+    !formacao
+  ) {
+    res
+      .status(400)
+      .json({ id: 0, msg: "Erro... Informe os dados necessários" });
+    return;
+  }
+
+  try {
+    const mentor = await Mentor.update(
+      {
+        nome,
+        email,
+        senha,
+        telefone,
+        descricao,
+        linkedin,
+        calendly,
+        profissao,
+        area_id,
+        empresa,
+        formacao,
+      },
+      {
+        where: { id },
+      }
+    );
+    res.status(200).json({ msg: "Ok! Alterado" });
+  } catch (error) {
+    res.status(400).send(error);
   }
 };

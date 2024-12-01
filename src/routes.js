@@ -1,6 +1,6 @@
 import { Router } from "express"
 
-import { mentorCreate, mentorIndex, mentorAlteraSenha, getMentorById, LoginMentor } from "./controllers/mentorController.js"
+import { mentorCreate, mentorIndex, mentorAlteraSenha, getMentorById, LoginMentor, mentorAlteraPerfil } from "./controllers/mentorController.js"
 import { areaIndex } from "./controllers/areaController.js"
 
 const router = Router()
@@ -11,6 +11,6 @@ router.get('/mentores', mentorIndex)
 	  .get('/mentores/:id', getMentorById)
 	  .post('/login', LoginMentor)
 	  .get('/areas', areaIndex)
-
+	  .put('/mentor/alterar/:id', mentorAlteraPerfil)
 
 export default router
