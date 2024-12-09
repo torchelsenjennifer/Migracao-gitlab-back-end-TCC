@@ -61,6 +61,10 @@ export const Mentor = sequelize.define('Mentor', {
     type: DataTypes.STRING(200),
     allowNull: false,
   },
+  premium: {
+	type: DataTypes.BOOLEAN,
+	allowNull: false,
+  },
 }, {
   tableName: 'mentores',
 });

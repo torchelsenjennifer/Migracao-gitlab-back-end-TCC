@@ -29,7 +29,7 @@ export const loginMentor = async (req, res) => {
         user_logado_nome: mentor.nome
       },
         process.env.JWT_KEY,
-        { expiresIn: "1h" }
+        { expiresIn: "10h" }
       )
 
       res.status(200).json({msg: "Ok. Logado", token})

@@ -80,6 +80,7 @@ export const mentorIndex = async (req, res) => {
 
     const mentores = await Mentor.findAll({
       where: whereClause,
+	  order: [['premium', 'DESC']],
     });
 
     res.status(200).json(mentores);
@@ -299,3 +300,37 @@ export const mentorAlteraPerfil = async (req, res) => {
     res.status(400).send(error);
   }
 };
+
+export const setPremium = async (req, res) => {
+	try {
+	  const usuario_id = req.user_logado_id;
+
+	  try {
+		// Atualiza o campo premium para 1 para o mentor
+		const mentor = await Mentor.update(
+		  {
+			premium: 1  // Definindo a coluna 'premium' como 1
+		  },
+		  {
+			where: { id: usuario_id }  // Utilizando o id do usuário logado
+		  }
+		);
+
+		if (mentor[0] === 0) {
+		  return res.status(404).json({ erro: "Mentor não encontrado." });
+		}
+
+		res.status(200).json({ msg: "Ok! Você é Premium!" });
+
+	  } catch (error) {
+		res.status(400).send({ erro: error.message });
+	  }
+
+	} catch (error) {
+	  console.error("Erro ao tornar premium:", error.message);
+	  res.status(500).json({
+		erro: "Erro ao recuperar o usuário logado",
+		error: error.message,
+	  });
+	}
+  };
